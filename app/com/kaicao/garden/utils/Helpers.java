@@ -1,8 +1,7 @@
 package com.kaicao.garden.utils;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
+import com.kaicao.garden.controllers.GardenVO;
 
 /**
  * Created by kaicao on 25/10/14.
@@ -17,4 +16,6 @@ public final class Helpers {
                 .configure(MapperFeature.AUTO_DETECT_GETTERS, false)
                 .configure(MapperFeature.AUTO_DETECT_IS_GETTERS, false);
     }
+    public final static ObjectReader GARDEN_VO_READER = MAPPER.reader(GardenVO.class);
+    public final static ObjectWriter GARDEN_VO_WRITER = MAPPER.writerWithType(GardenVO.class);
 }

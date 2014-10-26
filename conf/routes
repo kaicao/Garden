@@ -3,7 +3,11 @@
 # ~~~~
 
 # Home page
-GET     /                           com.kaicao.garden.controllers.Application.index()
+GET     /                           com.kaicao.garden.controllers.GardenController.index()
+GET     /garden/query               com.kaicao.garden.controllers.GardenController.queryGardenValue(min: Integer, max: Integer)
+GET     /garden/:id                 com.kaicao.garden.controllers.GardenController.getGardenById(id: String)
+POST    /garden/:name/:value        com.kaicao.garden.controllers.GardenController.addGarden(name: String, value: Integer)
+DELETE  /garden                     com.kaicao.garden.controllers.GardenController.resetGardens()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
