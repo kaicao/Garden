@@ -1,5 +1,6 @@
 package com.kaicao.garden.services;
 
+import com.kaicao.garden.db.DBManager;
 import com.kaicao.garden.db.MongoDBManager;
 import com.kaicao.garden.models.Garden;
 import org.junit.After;
@@ -20,9 +21,9 @@ public class GardenServiceTest {
     @BeforeClass
     public static void beforeClass() throws Exception {
         gardenService = new GardenService();
-        MongoDBManager mongoDBManager = new MongoDBManager();
-        mongoDBManager.createGardenCollection();
-        gardenService.mongoDBManager = mongoDBManager;
+        DBManager mongoDBManager = new MongoDBManager();
+        mongoDBManager.init();
+        gardenService.dbManager = mongoDBManager;
     }
 
 
@@ -48,7 +49,7 @@ public class GardenServiceTest {
             gardens.add(Garden.createGarden("Test" + i, i));
         }
         int insertCount = gardenService.addGardens(gardens);
-        assertEquals(insertCount, gardenService.mongoDBManager.count());
+        assertEquals(insertCount, gardenService.dbManager.count());
 
         List<Garden> retGardens1 = gardenService.getGardensByValueRange(10, 30);
         assertEquals(10, retGardens1.size());

@@ -7,6 +7,8 @@ import com.kaicao.garden.services.GardenService;
 import com.kaicao.garden.utils.Helpers;
 import com.kaicao.garden.utils.ServiceException;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.mvc.*;
 
 import javax.inject.Inject;
@@ -28,6 +30,7 @@ public class GardenController extends Controller {
         }
     }
 
+    private final static Logger LOG = LoggerFactory.getLogger(GardenController.class);
     @Inject
     static GardenService gardenService;
 
@@ -43,6 +46,7 @@ public class GardenController extends Controller {
             gardenService.addGarden(Garden.createGarden(name, value));
             return created();
         } catch (ServiceException e) {
+            LOG.error("Failed to add garden", e);
             return internalServerError(e.getMessage());
         }
     }
@@ -59,8 +63,7 @@ public class GardenController extends Controller {
             response().setContentType("application/json");
             return ok(Helpers.GARDEN_VO_WRITER.writeValueAsString(new GardenVO(garden)));
         } catch (Exception e) {
-            System.err.println("Error when getGardenById: " + e.getMessage());
-            e.printStackTrace();
+            LOG.error("Error when getGardenById", e);
             return internalServerError(e.getMessage());
         }
     }
@@ -78,8 +81,7 @@ public class GardenController extends Controller {
             response().setContentType("application/json");
             return ok(Helpers.MAPPER.writeValueAsString(response));
         } catch (Exception e) {
-            System.err.println("Fail to queryGardenValue " + e.getMessage());
-            e.printStackTrace();
+            LOG.error("Fail to queryGardenValue", e);
             return internalServerError(e.getMessage());
         }
     }
@@ -89,8 +91,7 @@ public class GardenController extends Controller {
             gardenService.dropGardens();
             return ok();
         } catch (Exception e) {
-            System.err.println("Fail to resetGardens " + e.getMessage());
-            e.printStackTrace();
+            LOG.error("Fail to resetGardens", e);
             return internalServerError(e.getMessage());
         }
     }

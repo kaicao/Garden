@@ -1,15 +1,13 @@
 package com.kaicao.garden.utils;
 
-import javax.xml.ws.http.HTTPException;
-
 /**
  * Created by kaicao on 26/10/14.
  */
-public class MongoDBManagerException extends ServiceException {
+public class DBManagerException extends ServiceException {
     private String message;
     private Throwable cause;
 
-    public MongoDBManagerException(String message, Throwable cause) {
+    public DBManagerException(String message, Throwable cause) {
         this.message = message;
         this.cause = cause;
     }
