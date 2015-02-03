@@ -5,32 +5,63 @@ import com.kaicao.garden.utils.DBManagerException;
 import com.mongodb.*;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Created by kaicao on 26/10/14.
  */
 @Singleton
 public class MongoDBManager implements DBManager {
-    private final static String HOST = "ds047950.mongolab.com";
-    private final static int PORT = 47950;
-    private final static String USERNAME = "admin";
-    private final static String PASSWORD = "admin";
-    private final static String DATABASE = "kaicao";
-    private static MongoClient client;
-    private static DB db;
+    private class MongoDBProperties {
+        private final static String PROPERTY_HOST = "mongodb.host";
+        private final static String PROPERTY_PORT = "mongodb.port";
+        private final static String PROPERTY_USERNAME = "mongodb.username";
+        private final static String PROPERTY_PASSWORD = "mongodb.password";
+        private final static String PROPERTY_DATABASE = "mongodb.database";
+        private Properties properties;
+
+        private MongoDBProperties() throws IOException {
+            properties = new Properties();
+            try (InputStream inputStream = MongoDBManager.class.getClassLoader().getResourceAsStream("mongodb.properties")) {
+                properties.load(inputStream);
+            }
+        }
+
+        private String getHost() {
+            return properties.getProperty(PROPERTY_HOST);
+        }
+
+        private int getPort() {
+            return Integer.parseInt(properties.getProperty(PROPERTY_PORT));
+        }
+
+        private String getUsername() {
+            return properties.getProperty(PROPERTY_USERNAME);
+        }
+
+        private String getPassword() {
+            return properties.getProperty(PROPERTY_PASSWORD);
+        }
+
+        private String getDatabase() {
+            return properties.getProperty(PROPERTY_DATABASE);
+        }
+    }
+
+    private MongoClient client;
+    private DB db;
 
     public MongoDBManager() throws Exception {
         try {
+            MongoDBProperties properties = new MongoDBProperties();
             if (null == client && null == db) {
                 client = new MongoClient(
-                        new ServerAddress(HOST, PORT),
-                        Arrays.asList(MongoCredential.createMongoCRCredential(USERNAME, DATABASE, PASSWORD.toCharArray()))
+                        new ServerAddress(properties.getHost(), properties.getPort()),
+                        Arrays.asList(MongoCredential.createMongoCRCredential(properties.getUsername(), properties.getDatabase(), properties.getPassword().toCharArray()))
                 );
-                db = client.getDB(DATABASE);
+                db = client.getDB(properties.getDatabase());
             }
         } catch (Exception e) {
             System.err.println("Not able to init MongoClient " + e.getMessage());
