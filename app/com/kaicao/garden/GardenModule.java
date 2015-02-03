@@ -2,6 +2,7 @@ package com.kaicao.garden;
 
 import com.google.inject.AbstractModule;
 import com.kaicao.garden.controllers.GardenController;
+import com.kaicao.garden.db.DBManager;
 import com.kaicao.garden.db.MongoDBManager;
 import com.kaicao.garden.services.GardenService;
 
@@ -12,7 +13,7 @@ public class GardenModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(MongoDBManager.class);
+        bind(DBManager.class).to(MongoDBManager.class);
         bind(GardenService.class);
 
         requestStaticInjection(GardenController.class);

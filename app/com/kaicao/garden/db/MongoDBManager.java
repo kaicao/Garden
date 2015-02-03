@@ -1,7 +1,7 @@
 package com.kaicao.garden.db;
 
 import com.kaicao.garden.models.Garden;
-import com.kaicao.garden.utils.MongoDBManagerException;
+import com.kaicao.garden.utils.DBManagerException;
 import com.mongodb.*;
 
 import javax.inject.Singleton;
@@ -14,7 +14,7 @@ import java.util.Set;
  * Created by kaicao on 26/10/14.
  */
 @Singleton
-public class MongoDBManager {
+public class MongoDBManager implements DBManager {
     private final static String HOST = "ds047950.mongolab.com";
     private final static int PORT = 47950;
     private final static String USERNAME = "admin";
@@ -39,7 +39,8 @@ public class MongoDBManager {
         }
     }
 
-    public void createGardenCollection() {
+    @Override
+    public void init() {
         // Cap 100 mega
         if (!getCollectionNames().contains("Garden")) {
             db.createCollection("Garden", (new BasicDBObject("capped", true).append("size", 104800000)));
@@ -50,30 +51,34 @@ public class MongoDBManager {
         return db.getCollectionNames();
     }
 
-    public void insert(Garden garden) throws MongoDBManagerException {
+    @Override
+    public void insert(Garden garden) throws DBManagerException {
         try {
             db.getCollection("Garden").save(garden);
         } catch (Exception e) {
-            throw new MongoDBManagerException("Fail to insert garden " + e.getMessage(), e);
+            throw new DBManagerException("Fail to insert garden " + e.getMessage(), e);
         }
     }
 
+    @Override
     public long count() {
         return db.getCollection("Garden").count();
     }
 
-    public Garden findById(String id) throws MongoDBManagerException {
+    @Override
+    public Garden findById(String id) throws DBManagerException {
         try {
             BasicDBObject query = new BasicDBObject("id", id);
             DBCollection collection = db.getCollection("Garden");
             collection.setObjectClass(Garden.class);
             return (Garden) collection.find(query).next();
         } catch (Exception e) {
-            throw new MongoDBManagerException("Fail to findById " + e.getMessage(), e);
+            throw new DBManagerException("Fail to findById " + e.getMessage(), e);
         }
     }
 
-    public List<Garden> queryValueRange(QueryRange<Integer> range) {
+    @Override
+    public List<Garden> queryValueRange(QueryRange<Integer> range) throws DBManagerException {
         try {
             DBCollection collection = db.getCollection("Garden");
             collection.setObjectClass(Garden.class);
@@ -84,19 +89,21 @@ public class MongoDBManager {
             }
             return result;
         } catch (Exception e) {
-            throw new MongoDBManagerException("Fail to queryValueRange " + e.getMessage(), e);
+            throw new DBManagerException("Fail to queryValueRange " + e.getMessage(), e);
         }
     }
 
-    public void drop() {
+    @Override
+    public void close() throws DBManagerException {
         try {
             db.getCollection("Garden").drop();
         } catch (Exception e) {
-            throw new MongoDBManagerException("Fail to drop " + e.getMessage(), e);
+            throw new DBManagerException("Fail to drop " + e.getMessage(), e);
         }
     }
 
-    public int insert(List<Garden> gardens) {
+    @Override
+    public int insert(List<Garden> gardens) throws DBManagerException {
         try {
             BulkWriteOperation builder = db.getCollection("Garden").initializeOrderedBulkOperation();
             for (Garden garden : gardens) {
@@ -104,7 +111,7 @@ public class MongoDBManager {
             }
             return builder.execute().getInsertedCount();
         } catch (Exception e) {
-            throw new MongoDBManagerException("Fail to bulk insert " + e.getMessage(), e);
+            throw new DBManagerException("Fail to bulk insert " + e.getMessage(), e);
         }
     }
 
