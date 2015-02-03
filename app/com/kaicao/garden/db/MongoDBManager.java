@@ -20,7 +20,7 @@ public class MongoDBManager implements DBManager {
         private final static String PROPERTY_USERNAME = "mongodb.username";
         private final static String PROPERTY_PASSWORD = "mongodb.password";
         private final static String PROPERTY_DATABASE = "mongodb.database";
-        private Properties properties;
+        private final Properties properties;
 
         private MongoDBProperties() throws IOException {
             properties = new Properties();
@@ -71,7 +71,7 @@ public class MongoDBManager implements DBManager {
     }
 
     @Override
-    public void init() {
+    public void init() throws DBManagerException {
         // Cap 100 mega
         if (!getCollectionNames().contains("Garden")) {
             db.createCollection("Garden", (new BasicDBObject("capped", true).append("size", 104800000)));

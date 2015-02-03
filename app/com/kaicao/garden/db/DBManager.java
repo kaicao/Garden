@@ -9,7 +9,7 @@ import java.util.List;
  * Created by kaicao on 03/02/15.
  */
 public interface DBManager {
-    public void init();
+    public void init() throws DBManagerException;
     public void insert(Garden garden) throws DBManagerException;
     public int insert(List<Garden> gardens) throws DBManagerException;
     public Garden findById(String id) throws DBManagerException;
