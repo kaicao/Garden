@@ -106,7 +106,7 @@ public class CassandraDBManager implements DBManager {
     @Override
     public void init() {
         try {
-            CassandraProperties properties = new CassandraProperties();
+            final CassandraProperties properties = new CassandraProperties();
             // Astyanax Reference: https://github.com/Netflix/astyanax/wiki/Getting-Started
             Supplier<List<Host>> hostSupplier = new Supplier<List<Host>>() {
                 @Override
